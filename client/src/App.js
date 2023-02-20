@@ -10,7 +10,7 @@ import Cart from "../src/components/Cart/Cart.jsx"
 import { AuthContextProvider } from "./context/AuthContext";
 import { Order } from "./components/Order/Order";
 import AdminApp from "./admin";
-import UserAdminApp from "./userAdmin";
+import UserAdminApp from "./miCuenta";
 import Error404 from "./components/404/Error404";
 import "./App.css";
 
@@ -38,10 +38,7 @@ function App() {
             <Cart />
           </Route>
           <Route exact path={"/micuenta"}>
-            <NavBar />
-            <Account />
-            <Footer />
-            <Cart />
+            <UserAdminApp/>
           </Route>
           <Route exact path={"/comprar"}>
             <NavBar isCartDisabled={true} />
@@ -50,9 +47,6 @@ function App() {
           </Route>
           <Route exact path={"/admin"}>
             <AdminApp />
-          </Route>
-          <Route exact path={"/user/admin"}>
-            <UserAdminApp />
           </Route>
           <Route path='*'>
             <Error404 />
