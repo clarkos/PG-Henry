@@ -9,6 +9,9 @@ import {
   REMOVE_FROM_CART,
   EMPTY_CART,
   ADD_EDIT_CART,
+  ORDER_SELECTED,
+  FETCHING_PRODUCTS,
+  GET_OLDSHOWS
 } from "./actions";
 
 // import { addItem } from "./utils";
@@ -16,6 +19,7 @@ import {
 const initialState = {
   error: false,
   products: [],
+  fetchProducts: "loading",
   product: {},
   allProducts: [],
   filteredProducts: [],
@@ -34,7 +38,17 @@ const rootReducer = (state = initialState, action) => {
           ? state.filteredProducts
           : action.payload,
         allProducts: action.payload,
+        fetchProducts: "succeeded"
       };
+    }
+
+    case GET_OLDSHOWS: {
+      return{
+        ...state,
+        products: action.payload,
+      allProducts: action.payload,
+      fetchProducts: "succeeded"
+      }
     }
 
     case TOGGLE_SHOW_CART:
@@ -54,6 +68,7 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         products: action.payload,
+        fetchProducts: "succeeded"
         //allProducts: action.payload,
         // filteredProducts: action.payload,
       };
@@ -75,11 +90,12 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         error: payload,
       };
-    case ADD_EDIT_CART:
+    case ADD_EDIT_CART: {
       return {
         ...state,
         totalItems: action.payload,
       };
+    }
     case REMOVE_FROM_CART:
       return {
         ...state,
@@ -90,6 +106,16 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         totalItems: action.payload
       };
+    case ORDER_SELECTED: 
+      return {
+        ...state,
+        totalItems: action.payload["totalItems"],
+      };
+      case FETCHING_PRODUCTS:
+        return{
+          ...state,
+          fetchProducts: "loading"
+        }
     default:
       return { ...state };
   }

@@ -4,6 +4,9 @@ import { UserAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
 import Error_Search from "../../assets/Error_Search.jpg";
 import { getDetailedUser } from '../../common/integrations/api';
+import AdminApp from "../../admin";
+import UserApp from "../../miCuenta";
+import Loader from "../Loader/Loader";
 import "./Account.css";
 
 export default function Account() {
@@ -54,7 +57,7 @@ export default function Account() {
 
   if (apiUser.fetchStatus === 'loading') {
     return <>
-      <p>Obteniendo datos...</p>
+      <Loader />
     </>
   }
 
@@ -65,6 +68,15 @@ export default function Account() {
       <NavLink to="/">Volver</NavLink>
     </>
   }
+
+  if (apiUser.item.role === 'Admin') {
+    return <AdminApp />;
+  }
+  if (apiUser.item.role === 'User') {
+    return <UserApp />;
+  }
+
+  // return <UserApp />;
 
   return (
     <div className="account_page_container">

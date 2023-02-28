@@ -5,20 +5,30 @@ import { Pagination, productIndex } from "../Pagination/Pagination";
 import SingleCard from "../Cards/SingleCard";
 import "./Shows.css";
 // import banner from "../../assets/banner.shows.fw.png";
-import Loader from "../Loader/Loader";
-import Filters from "../Filters/Filters";
+import Filters from "../Filters/FiltersV2";
+import SkeletonShows from "../Skeleton/SkeletonShows";
 
 const Shows = () => {
   //const [selectedDay, setSelectedDay] = useState("");
   //const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
   const { lastProduct, firstProduct } = productIndex(currentPage, 6);
   const products = useSelector((state) => state.products);
+  const fetchProducts = useSelector((state) => state.fetchProducts);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getProducts());
   }, [dispatch]);
+
+  // NOTA de friss: el useEffect a continuación vuelve a la página 1 luego de hacer búsquedas;
+  // Si por ejemplo el usuario está viendo la página 5 y se le ocurre buscar algo, si el resultado devuelve
+  // menos de 5 páginas, currentPage va a apuntar a una página inexistente.
+  // Esto es solo una solución temporal, quién pueda que lo haga de la manera correcta.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [products]);
 
   const handlePrev = () => {
     setCurrentPage(currentPage - 1);
@@ -33,7 +43,9 @@ const Shows = () => {
   return (
     <div className="shows__background-container">
       {/* <img src={banner} alt="banner shows" className="shows__banner-img" /> */}
-      {products.length ? (
+      {fetchProducts === "loading" ? (
+        <SkeletonShows />
+      ) : (
         <>
           {/* FILTRADO*/}
           <div className="shows__filters-container">
@@ -42,8 +54,12 @@ const Shows = () => {
           {/* FIN FILTRADO*/}
 
           <div className="shows__cards-container">
-            {products.length ? (
-              products
+            {!products.length ? (
+              <h2 className="shows__cards-h1FilterError">
+                No hay shows disponibles con los filtros seleccionados.
+              </h2>
+            ) : (
+              products 
                 ?.sort(
                   (a, b) =>
                     new Date(a.StartDate + "T00:00:00") -
@@ -51,27 +67,17 @@ const Shows = () => {
                 )
                 .slice(firstProduct, lastProduct)
                 .map((prod) => <SingleCard data={prod} key={prod.id} />)
-            ) : (
-              <h2 className="shows__cards-h1FilterError">
-                No se encontraron shows con el fitro seleccionado
-              </h2>
             )}
           </div>
 
-          {/* {!products.length ? (
-            <></>
-          ) : ( */}
+          {products.length > 0 && (
             <Pagination
               products={products}
               handlePrev={handlePrev}
               handleNext={handleNext}
               currentPage={currentPage}
             />
-          {/* )} */}
-        </>
-      ) : (
-        <>
-          <Loader />
+          )}
         </>
       )}
     </div>
